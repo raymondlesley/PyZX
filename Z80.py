@@ -1,6 +1,8 @@
 import video
+import time
 
-REFRESH_RATE = 5  # in Hz ... 50 = full speed
+CPU_INTERRUPT_RATE = 10  # in Hz ... 50 = full speed
+SCREEN_REFRESH = 5   # in Hz
 
 tstatesPerInterrupt = 0
 
@@ -11,18 +13,23 @@ def iif(x, a, b):
 	else:
 		return b
 
+'''
 def xbits(a):
 	for i in xrange(8):
 		yeild ((a >> i) & 0x01)
+'''
 
 def byte(a):
 	return (a > 127) and (a - 256) or a
 # ---------------------------------
 
+MHz = 0.0
+
 def Z80(clockFrequencyInMHz):
 	global tstatesPerInterrupt
 	# 50Hz for main interrupt signal
-	tstatesPerInterrupt = int((clockFrequencyInMHz * 1e6) / REFRESH_RATE)
+	tstatesPerInterrupt = int((clockFrequencyInMHz * 1e6) / CPU_INTERRUPT_RATE)
+	MHz = clockFrequencyInMHz
 
 IM0 = 0
 IM1 = 1
@@ -439,15 +446,19 @@ def inb( port ):
 #		return (tstates >= 0);
 
 
-video_update_time = 0
-def interrupt():
+video_update_time = time.monotonic()
+def interrupt(ticks):
 	global video_update_time
-	Hz = 25
+	Hz = 1.0/SCREEN_REFRESH
+	previous = video_update_time
 
-	video_update_time += 1
+	video_update_time = time.monotonic()
 	keyboard.do_keys()
-	if not (video_update_time % int(50/Hz)):
-		video.update()
+	#if not (video_update_time % int(50/Hz)):
+	elapsed = video_update_time - previous
+	if (elapsed) > Hz:
+		frequency = ticks * CPU_INTERRUPT_RATE * elapsed / SCREEN_REFRESH
+		video.update(frequency)
 	return interruptCPU()
 
 def interruptCPU():
@@ -470,160 +481,146 @@ def interruptCPU():
 			return 19;
 		return 0;
 
+# -----------------------------------------------------------
+# Z80 opcodes
+# return tstates elapsed
 
-# Z80 fetch/execute loop 
+def op_nop():  # op 0 / NOP
+	return 4
+
+def op_ld_bc_xx():  # op 1 / LD BC,nn
+	BC(nxtpcw())
+	return 10
+
+def op_ex_af_af():  # EX AF,AF
+	ex_af_af()
+	return 4
+
+def op_add_hl_bc():  # op 9 / ADD HL,BC
+	HL(add16(_HL, BCget()))
+	return 11
+
+def op_djnz_x():  # op 16 / DJNZ dis
+	b = qdec8(_B)
+	B(b)
+	if (b != 0):
+		d = byte(nxtpcb())
+		PC((_PC + d) & 0xffff)
+		return 13
+	else:
+		PC(inc16(_PC))
+		return 8
+
+def op_ld_de_xx():  # op 17 / LD DE,nn
+	DE(nxtpcw())
+	return 10
+
+def op_jr_x():  # op 24 / JR dis
+	d = byte(nxtpcb())
+	PC((_PC + d) & 0xffff)
+	return 12
+
+def op_add_hl_de():  # op 25 / ADD HL,DE
+	HL(add16(_HL, DEget()))
+	return 11
+
+def op_jr_nz_x():  # op 32 / JR NZ,dis
+	# WARNING: Rom doesnt work properly ! VM 2005   Java byte must be -128...+127
+	# UPDATE: added byte function converter
+	# JR cc,dis
+	if not fZ:
+		# if ram_filled:
+		d = byte(nxtpcb())
+		PC((_PC + d) & 0xffff)
+		return 12
+	else:
+		# print 'PC (inc16(_PC )):', PC( inc16( _PC  ) )
+		PC(inc16(_PC))
+		return 7
+
+def op_ld_hl_xx():  # op 33 / LD HL,nn
+	HL(nxtpcw());
+	return 10
+
+def op_jr_z_x():  # op 40 / JR Z,dis
+	if (fZ):
+		d = byte(nxtpcb())
+		PC((_PC + d) & 0xffff)
+		return 12
+	else:
+		PC(inc16(_PC));
+		return 7
+
+def op_add_hl_hl():  # op 41 / ADD HL,HL
+	hl = _HL;
+	HL(add16(hl, hl));
+	return 11
+
+def op_jr_nc_x():  # op 48 / JR NC,dis
+	if (not fC):
+		d = byte(nxtpcb())
+		PC((_PC + d) & 0xffff)
+		return 12
+	else:
+		PC(inc16(_PC))
+		return 7
+
+def op_ld_sp_xx():  # op 49 / LD SP,nn
+	SP(nxtpcw());
+	return 10
+
+def op_jr_c_x():  # op 56 / JR C,dis
+	if (fC):
+		d = byte(nxtpcb())
+		PC((_PC + d) & 0xffff)
+		return 12
+	else:
+		PC(inc16(_PC))
+		return 7
+
+opcodes = {
+	0: op_nop,
+	1: op_ld_bc_xx,
+	8: op_ex_af_af,
+	9: op_add_hl_bc,
+	16: op_djnz_x,
+	17: op_ld_de_xx,
+	24: op_jr_x,
+	25: op_add_hl_de,
+	32: op_jr_nz_x,
+	33: op_ld_hl_xx,
+	40: op_jr_z_x,
+	41: op_add_hl_hl,
+	48: op_jr_nc_x,
+	49: op_ld_sp_xx,
+	56: op_jr_c_x
+}
+
+# Z80 fetch/execute loop
+# TODO: rewrite using a dict of opcode functions...
 def execute():
 		global _R
-		#global ram_filled, 
 		local_tstates = -tstatesPerInterrupt; # -70000
-		#video_update_time = 0
-		#ram_filled = False
 
 		while ( True ):
-			#show_registers()
-			#if ram_filled:
-			#	if not video_update_time % 100000:
-			#		video.update()
-				#print video_update_time
-				#show_registers()
 
-			#if interruptTriggered( local_tstates ): #local_tstates >= 0
 			if local_tstates >= 0:
-				local_tstates -= tstatesPerInterrupt - interrupt();
+				local_tstates -= tstatesPerInterrupt - interrupt(tstatesPerInterrupt-local_tstates);
 
 			_R += 1 
 			opcode = nxtpcb()
 
-			#if (_PC  >= 4575) and (_HL < 22527): #> 4580: # == 4577: #0x11E1:
-			#if _HL == 16400:
-			#	ram_filled = True
-			#if ram_filled:
-			#	print _PC , _HL
-			#	show_registers()
-			#	print hex(opcode)
-			#	print
-
-			#print hex(opcode), opcode
-			#print hex(opcode),' ',
-			if opcode == 0:    # NOP 
-				local_tstates += ( 4 );
+			try:
+				opcode_fn = opcodes[opcode]
+				local_tstates += opcode_fn()
 				continue
-		
-			if opcode == 8:    # EX AF,AF' 
-				ex_af_af();
-				local_tstates += ( 4 );
-				continue
-		
-			if opcode == 16:    # DJNZ dis 
-				b = qdec8( _B ) 
-				B(b)
-				if (b != 0):
-					d = byte(nxtpcb())
-					PC( (_PC +d)&0xffff )
-					local_tstates += ( 13 )
-				else :
-					PC( inc16( _PC  ) )
-					local_tstates += ( 8 )
-				continue
-		
-			if opcode == 24: # JR dis 
-				d = byte(nxtpcb())
-				PC( (_PC +d)&0xffff )
-				local_tstates += ( 12 )
-				continue
-		
-			#WARNING: Rom doesnt work properly ! VM 2005   Java byte must be -128...+127
-			# UPDATE: added byte function converter
-			# JR cc,dis 
-			if opcode == 32:    # JR NZ,dis 
-				if not fZ:
-					#if ram_filled:
-					#	print 'fZ:', fZ
-					d = byte(nxtpcb())
-					PC( (_PC +d)&0xffff )
-					#if _PC  != 4572: 
-					#	print '###########', _PC 
-					#	print 'd:', d
-					#	print '(_PC +d)&0xffff', (_PC +d)&0xffff
-					#print '_PC +d)&0xffff:%s' % str((_PC +d)&0xffff)
-					local_tstates += ( 12 )
-					continue
-				else :
-					#print 'PC (inc16(_PC )):', PC( inc16( _PC  ) )
-					PC( inc16( _PC  ) )
-					#print 'NEW PC:', _PC 
-					local_tstates += ( 7 )
-				continue
-		
-			if opcode == 40:    # JR Z,dis 
-				if ( fZ):
-					d = byte(nxtpcb())
-					PC( (_PC +d)&0xffff )
-					local_tstates += ( 12 )
-				else :
-					PC( inc16( _PC  ) );
-					local_tstates += ( 7 )
-				continue
-		
-			if opcode == 48:    # JR NC,dis 
-				if (not fC):
-					d = byte(nxtpcb())
-					PC( (_PC +d)&0xffff )
-					local_tstates += ( 12 )
-				else :
-					PC( inc16( _PC  ) )
-					local_tstates += ( 7 )
-				continue
-		
-			if opcode == 56:    # JR C,dis 
-				if ( fC):
-					d = byte(nxtpcb())
-					PC( (_PC +d)&0xffff )
-					local_tstates += ( 12 )
-				else :
-					PC( inc16( _PC  ) )
-					local_tstates += ( 7 )
-				continue
-		
+			except KeyError:
+				# print("Illegal opcode: %d (%x)" % (opcode, opcode)
+				pass  # not (yet) converted to opcode function...
+				# TODO this should end up being an exception
 
 			# LD rr,nn / ADD HL,rr 
-			if opcode == 1:    # LD BCget(),nn 
-				BC( nxtpcw() );
-				local_tstates += ( 10 );
-				continue
-		
-			if opcode == 9:    # ADD HL,BC 
-				HL( add16( _HL, BCget() ) );
-				local_tstates += ( 11 );
-				continue
-		
-			if opcode == 17:    # LD DE,nn 
-				DE( nxtpcw() );
-				local_tstates += ( 10 );
-				continue
-		
-			if opcode == 25:    # ADD HL,DE 
-				HL( add16( _HL, DEget() ) );
-				local_tstates += ( 11 );
-				continue
-		
-			if opcode == 33:    # LD HL,nn 
-				HL( nxtpcw() );
-				local_tstates += ( 10 );
-				continue
-		
-			if opcode == 41:    # ADD HL,HL 
-				hl = _HL;
-				HL( add16( hl, hl ) );
-				local_tstates += ( 11 );
-				continue
-		
-			if opcode == 49:    # LD SP,nn 
-				SP( nxtpcw() );
-				local_tstates += ( 10 );
-				continue
-		
-			if opcode == 57:    # ADD HL,SP 
+			if opcode == 57:    # ADD HL,SP
 				HL( add16( _HL, SPget() ) );
 				local_tstates += ( 11 );
 				continue

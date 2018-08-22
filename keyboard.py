@@ -170,7 +170,8 @@ def key_down(event):
 	except KeyError:
 		key = ''
 
-	key_events.append((True, key, mods))
+	#key_events.append((True, key, mods))
+	do_key(True, key, mods)
 
 def key_up(event):
 	mods = event.state
@@ -180,7 +181,8 @@ def key_up(event):
 	except KeyError:
 		key = ''
 
-	key_events.append((False, key, mods))
+	#key_events.append((False, key, mods))
+	do_key(False, key, mods)
 
 
 def do_keys():

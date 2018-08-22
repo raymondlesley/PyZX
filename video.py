@@ -1,6 +1,7 @@
 
 from tkinter import Tk, Canvas, PhotoImage, mainloop
 import Z80, keyboard
+import time # for performance monitoring
 
 xscale = 1
 yscale = 1
@@ -49,6 +50,13 @@ buf_length = buf_end - buf_start + 1
 attr_start = 22528
 attr_end = 23295
 
+perf_count = time.monotonic()
+
+def elapsed_time():
+	global perf_count
+	previous = perf_count
+	perf_count = time.monotonic()
+	return perf_count - previous
 
 def refreshWholeScreen():
 	for i in xrange(firstAttr):
@@ -71,6 +79,7 @@ def init():
 	screen_map.pack()
 	screen.bind('<KeyPress>', keyboard.key_down)
 	screen.bind('<KeyRelease>', keyboard.key_up)
+	screen.update()
 	return
 
 def rgb_to_string(rgb):
@@ -78,11 +87,19 @@ def rgb_to_string(rgb):
 	colour = '#{0:02X}{1:02X}{2:02X}'.format(*rgb)
 	return colour
 
-def set_at(coords, colour):
-	global screen_img
-	colour_string = rgb_to_string(colour)
-	screen_img.put(colour_string, coords)
+pixel_buffer = [['#999900' for x in range(SCREEN_WIDTH)] for y in range(SCREEN_HEIGHT)]
 
+def set_pixel(coords, colour):
+	colour_string = rgb_to_string(colour)
+	offset = coords[0]+coords[1]*SCREEN_WIDTH
+	pixel_buffer[coords[1]][coords[0]] = colour_string
+
+def set_at(coords, colour):
+	# global screen_img
+	# colour_string = rgb_to_string(colour)
+	# screen_img.put(colour_string, coords)
+	colour_string = rgb_to_string(colour)
+	pixel_buffer[coords[1]][coords[0]] = colour_string
 
 def fill_screen_map():
 	global screen, Z80
@@ -146,8 +163,15 @@ def fill_screen_map():
 			color = pap
 		set_at((sx, y), brightColors[color])
 
+	screen_string = " ".join(["{" + " ".join([pixel for pixel in row]) + "}" for row in pixel_buffer])
+	screen_img.put(screen_string, to=(0, 0)) # , SCREEN_WIDTH, SCREEN_HEIGHT))
 
-def update():
+def update(ticks):
 	global screen
+	# start = time.monotonic()
 	fill_screen_map()
+	# update_time = time.monotonic() - start
+	cpu_rate = ticks / 1.0e6
+	video_rate = 1.0 / elapsed_time()
+	screen.title("PyZX [%3.1fMhz/ %1.1fHz]" % (cpu_rate, video_rate))
 	screen.update()

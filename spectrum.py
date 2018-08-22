@@ -43,7 +43,7 @@ def run():
 		return
 
 video.init()
-Z80.Z80(3.5) #MhZ
+Z80.Z80(3.5) # CPU freq in MhZ
 
 load_rom(romfile)
 Z80.reset()
