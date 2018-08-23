@@ -589,26 +589,26 @@ def op_add_hl_sp():  # op 57 (0x39) / ADD HL,SP
 	HL(add16(_HL, SPget()))
 	return 11
 
-opcodes = {
-	0: op_nop,
-	1: op_ld_bc_xx,
-	2: op_ld_bc_a,
-	8: op_ex_af_af,
-	9: op_add_hl_bc,
-	10: op_ld_a_bc,
-	16: op_djnz_x,
-	17: op_ld_de_xx,
-	24: op_jr_x,
-	25: op_add_hl_de,
-	32: op_jr_nz_x,
-	33: op_ld_hl_xx,
-	40: op_jr_z_x,
-	41: op_add_hl_hl,
-	48: op_jr_nc_x,
-	49: op_ld_sp_xx,
-	56: op_jr_c_x,
-	57: op_add_hl_sp
-}
+opcodes = [0] * 256
+opcodes[0] = op_nop
+opcodes[1] = op_ld_bc_xx
+opcodes[2] = op_ld_bc_a
+opcodes[8] = op_ex_af_af
+opcodes[9] = op_add_hl_bc
+opcodes[10] = op_ld_a_bc
+opcodes[16] = op_djnz_x
+opcodes[17] = op_ld_de_xx
+opcodes[24] = op_jr_x
+opcodes[25] = op_add_hl_de
+opcodes[32] = op_jr_nz_x
+opcodes[33] = op_ld_hl_xx
+opcodes[40] = op_jr_z_x
+opcodes[41] = op_add_hl_hl
+opcodes[48] = op_jr_nc_x
+opcodes[49] = op_ld_sp_xx
+opcodes[56] = op_jr_c_x
+opcodes[57] = op_add_hl_sp
+
 
 # Z80 fetch/execute loop
 # TODO: rewrite using a dict of opcode functions...
@@ -626,8 +626,9 @@ def execute():
 
 			try:
 				opcode_fn = opcodes[opcode]
-				local_tstates += opcode_fn()
-				continue
+				if not opcode_fn == 0:
+					local_tstates += opcode_fn()
+					continue
 			except KeyError:
 				# print("Illegal opcode: %d (%x)" % (opcode, opcode)
 				pass  # not (yet) converted to opcode function...
