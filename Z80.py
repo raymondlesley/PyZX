@@ -57,6 +57,7 @@ for i in range(256):
 	parity[i] = p
 
 
+# TODO: add word registers - speed up read ops (need to extend write ops)
 # **Main registers
 _A = 0; _HL = 0; _B = 0; _C = 0; _DE = 0
 fS = False; fZ  = False; f5 = False; fH = False
@@ -492,7 +493,11 @@ def op_ld_bc_xx():  # op 1 / LD BC,nn
 	BC(nxtpcw())
 	return 10
 
-def op_ex_af_af():  # EX AF,AF
+def op_ld_bc_a():  # op 2 / LD (BC),A
+	mem[BCget()] = _A
+	return 7
+
+def op_ex_af_af():  # op 8 / EX AF,AF
 	ex_af_af()
 	return 4
 
@@ -500,7 +505,11 @@ def op_add_hl_bc():  # op 9 / ADD HL,BC
 	HL(add16(_HL, BCget()))
 	return 11
 
-def op_djnz_x():  # op 16 / DJNZ dis
+def op_ld_a_bc():  # op 10 (0x0A) / LD A,(BC)
+	A(peekb(BCget()))
+	return 7
+
+def op_djnz_x():  # op 16 (0x10) / DJNZ dis
 	b = qdec8(_B)
 	B(b)
 	if (b != 0):
@@ -511,20 +520,20 @@ def op_djnz_x():  # op 16 / DJNZ dis
 		PC(inc16(_PC))
 		return 8
 
-def op_ld_de_xx():  # op 17 / LD DE,nn
+def op_ld_de_xx():  # op 17 (0x11) / LD DE,nn
 	DE(nxtpcw())
 	return 10
 
-def op_jr_x():  # op 24 / JR dis
+def op_jr_x():  # op 24 (0x18) / JR dis
 	d = byte(nxtpcb())
 	PC((_PC + d) & 0xffff)
 	return 12
 
-def op_add_hl_de():  # op 25 / ADD HL,DE
+def op_add_hl_de():  # op 25 (0x19) / ADD HL,DE
 	HL(add16(_HL, DEget()))
 	return 11
 
-def op_jr_nz_x():  # op 32 / JR NZ,dis
+def op_jr_nz_x():  # op 32 (0x20) / JR NZ,dis
 	# WARNING: Rom doesnt work properly ! VM 2005   Java byte must be -128...+127
 	# UPDATE: added byte function converter
 	# JR cc,dis
@@ -538,25 +547,25 @@ def op_jr_nz_x():  # op 32 / JR NZ,dis
 		PC(inc16(_PC))
 		return 7
 
-def op_ld_hl_xx():  # op 33 / LD HL,nn
-	HL(nxtpcw());
+def op_ld_hl_xx():  # op 33 (0x21) / LD HL,nn
+	HL(nxtpcw())
 	return 10
 
-def op_jr_z_x():  # op 40 / JR Z,dis
+def op_jr_z_x():  # op 40 (0x28) / JR Z,dis
 	if (fZ):
 		d = byte(nxtpcb())
 		PC((_PC + d) & 0xffff)
 		return 12
 	else:
-		PC(inc16(_PC));
+		PC(inc16(_PC))
 		return 7
 
-def op_add_hl_hl():  # op 41 / ADD HL,HL
-	hl = _HL;
-	HL(add16(hl, hl));
+def op_add_hl_hl():  # op 41 (0x29) / ADD HL,HL
+	hl = _HL
+	HL(add16(hl, hl))
 	return 11
 
-def op_jr_nc_x():  # op 48 / JR NC,dis
+def op_jr_nc_x():  # op 48 (0x30) / JR NC,dis
 	if (not fC):
 		d = byte(nxtpcb())
 		PC((_PC + d) & 0xffff)
@@ -565,11 +574,11 @@ def op_jr_nc_x():  # op 48 / JR NC,dis
 		PC(inc16(_PC))
 		return 7
 
-def op_ld_sp_xx():  # op 49 / LD SP,nn
-	SP(nxtpcw());
+def op_ld_sp_xx():  # op 49 (0x31) / LD SP,nn
+	SP(nxtpcw())
 	return 10
 
-def op_jr_c_x():  # op 56 / JR C,dis
+def op_jr_c_x():  # op 56 (0x38) / JR C,dis
 	if (fC):
 		d = byte(nxtpcb())
 		PC((_PC + d) & 0xffff)
@@ -578,11 +587,17 @@ def op_jr_c_x():  # op 56 / JR C,dis
 		PC(inc16(_PC))
 		return 7
 
+def op_add_hl_sp():  # op 57 (0x39) / ADD HL,SP
+	HL(add16(_HL, SPget()))
+	return 11
+
 opcodes = {
 	0: op_nop,
 	1: op_ld_bc_xx,
+	2: op_ld_bc_a,
 	8: op_ex_af_af,
 	9: op_add_hl_bc,
+	10: op_ld_a_bc,
 	16: op_djnz_x,
 	17: op_ld_de_xx,
 	24: op_jr_x,
@@ -593,7 +608,8 @@ opcodes = {
 	41: op_add_hl_hl,
 	48: op_jr_nc_x,
 	49: op_ld_sp_xx,
-	56: op_jr_c_x
+	56: op_jr_c_x,
+	57: op_add_hl_sp
 }
 
 # Z80 fetch/execute loop
@@ -619,19 +635,7 @@ def execute():
 				pass  # not (yet) converted to opcode function...
 				# TODO this should end up being an exception
 
-			# LD rr,nn / ADD HL,rr 
-			if opcode == 57:    # ADD HL,SP
-				HL( add16( _HL, SPget() ) );
-				local_tstates += ( 11 );
-				continue
-		
-
-			# LD (**),A/A,(**) 
-			if opcode == 2:    # LD (BC),A 
-			 mem[ BCget()] = _A ; local_tstates += ( 7 ); continue
-			if opcode == 10:    # LD A,(BC) 
-			 A( peekb( BCget() ) ); local_tstates += ( 7 ); continue
-			if opcode == 18:    # LD (DE),A 
+			if opcode == 18:    # LD (DE),A
 			 mem[ DEget()] = _A ; local_tstates += ( 7 ); continue
 			if opcode == 26:    # LD A,(DE) 
 			 A( peekb( DEget() ) ); local_tstates += ( 7 ); continue

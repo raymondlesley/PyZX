@@ -68,7 +68,7 @@ def refreshWholeScreen():
 	first = firstAttr - 1;
 	FIRST = -1
 
-
+# TODO: handle and bind window close event
 def init():
 	global screen, screen_map, screen_img
 	screen = Tk()
@@ -89,15 +89,7 @@ def rgb_to_string(rgb):
 
 pixel_buffer = [['#999900' for x in range(SCREEN_WIDTH)] for y in range(SCREEN_HEIGHT)]
 
-def set_pixel(coords, colour):
-	colour_string = rgb_to_string(colour)
-	offset = coords[0]+coords[1]*SCREEN_WIDTH
-	pixel_buffer[coords[1]][coords[0]] = colour_string
-
 def set_at(coords, colour):
-	# global screen_img
-	# colour_string = rgb_to_string(colour)
-	# screen_img.put(colour_string, coords)
 	colour_string = rgb_to_string(colour)
 	pixel_buffer[coords[1]][coords[0]] = colour_string
 
