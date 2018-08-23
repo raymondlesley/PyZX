@@ -611,7 +611,7 @@ opcodes[57] = op_add_hl_sp
 
 
 # Z80 fetch/execute loop
-# TODO: rewrite using a dict of opcode functions...
+# TODO: rewrite using a list of opcode functions...
 def execute():
 		global _R
 		local_tstates = -tstatesPerInterrupt; # -70000

@@ -5,7 +5,7 @@
 import time
 import random
 
-ITERATIONS = 100000
+ITERATIONS = 1000000
 
 def Assert(truth):
     if not truth:
@@ -532,3 +532,30 @@ for repeat in range(ITERATIONS):
     opfn()
 stop = time.process_time()
 print("indexed: %fs" % (stop - start))
+
+# ============================================================================
+# iff - function or lambda?
+
+def iif_fn(x, a, b):
+	if x:
+		return a
+	else:
+		return b
+
+iif_lambda = lambda x, a, b : a if x else b
+
+print("iif:")
+
+start = time.process_time()
+for repeat in range(ITERATIONS):
+    Assert(iif_fn(True, 1, 2) == 1)
+    Assert(iif_fn(False, 1, 2) == 2)
+stop = time.process_time()
+print("procedure: %fs" % (stop - start))
+
+start = time.process_time()
+for repeat in range(ITERATIONS):
+    Assert(iif_fn(True, 1, 2) == 1)
+    Assert(iif_fn(False, 1, 2) == 2)
+stop = time.process_time()
+print("lambda: %fs" % (stop - start))
