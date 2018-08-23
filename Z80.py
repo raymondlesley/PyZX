@@ -23,13 +23,10 @@ def byte(a):
 	return (a > 127) and (a - 256) or a
 # ---------------------------------
 
-MHz = 0.0
-
 def Z80(clockFrequencyInMHz):
 	global tstatesPerInterrupt
 	# 50Hz for main interrupt signal
 	tstatesPerInterrupt = int((clockFrequencyInMHz * 1e6) / CPU_INTERRUPT_RATE)
-	MHz = clockFrequencyInMHz
 
 IM0 = 0
 IM1 = 1
@@ -58,6 +55,7 @@ for i in range(256):
 
 
 # TODO: add word registers - speed up read ops (need to extend write ops)
+# TODO: store flags as the relevant bit (i.e. ff = 0x20, rather than True) - no shifting!
 # **Main registers
 _A = 0; _HL = 0; _B = 0; _C = 0; _DE = 0
 fS = False; fZ  = False; f5 = False; fH = False
@@ -447,19 +445,19 @@ def inb( port ):
 #		return (tstates >= 0);
 
 
+REFRESH_PERIOD = 1.0/SCREEN_REFRESH
+
 video_update_time = time.monotonic()
+
 def interrupt(ticks):
 	global video_update_time
-	Hz = 1.0/SCREEN_REFRESH
-	previous = video_update_time
 
-	video_update_time = time.monotonic()
-	keyboard.do_keys()
-	#if not (video_update_time % int(50/Hz)):
-	elapsed = video_update_time - previous
-	if (elapsed) > Hz:
-		frequency = ticks * CPU_INTERRUPT_RATE * elapsed / SCREEN_REFRESH
-		video.update(frequency)
+	time_now = time.monotonic()
+	elapsed = time_now - video_update_time
+	if elapsed > REFRESH_PERIOD:
+		video_update_time = time_now
+		cpu_freq = 1.0/(CPU_INTERRUPT_RATE * elapsed)
+		video.update(cpu_freq)
 	return interruptCPU()
 
 def interruptCPU():

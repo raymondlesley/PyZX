@@ -157,11 +157,7 @@ keymap = {
 	40: K_DOWN
 }
 
-def map_keys(key):
-	if key == '\x08':  key = K_BACKSPACE
-	return key
 
-# TODO: call do_key() directly; remove key_events; empty do_keys()
 def key_down(event):
 	mods = event.state
 
@@ -170,8 +166,8 @@ def key_down(event):
 	except KeyError:
 		key = ''
 
-	#key_events.append((True, key, mods))
 	do_key(True, key, mods)
+
 
 def key_up(event):
 	mods = event.state
@@ -181,16 +177,7 @@ def key_up(event):
 	except KeyError:
 		key = ''
 
-	#key_events.append((False, key, mods))
 	do_key(False, key, mods)
-
-
-def do_keys():
-	global key_events
-
-	for event in key_events:
-		do_key(event[0], event[1], event[2])
-	key_events = []  # reset event buffer
 
 
 def do_key(down, ascii, mods):

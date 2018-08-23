@@ -158,12 +158,9 @@ def fill_screen_map():
 	screen_string = " ".join(["{" + " ".join([pixel for pixel in row]) + "}" for row in pixel_buffer])
 	screen_img.put(screen_string, to=(0, 0)) # , SCREEN_WIDTH, SCREEN_HEIGHT))
 
-def update(ticks):
+def update(cpu_freq):
 	global screen
-	# start = time.monotonic()
 	fill_screen_map()
-	# update_time = time.monotonic() - start
-	cpu_rate = ticks / 1.0e6
-	video_rate = 1.0 / elapsed_time()
-	screen.title("PyZX [%3.1fMhz/ %1.1fHz]" % (cpu_rate, video_rate))
+	video_freq = 1.0 / elapsed_time()
+	screen.title("PyZX [%3.1fMhz / %1.1fHz]" % (cpu_freq, video_freq))
 	screen.update()
