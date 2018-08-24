@@ -93,63 +93,73 @@ def set_at(coords, colour):
 	colour_string = rgb_to_string(colour)
 	pixel_buffer[coords[1]][coords[0]] = colour_string
 
+BIT7 = 0x80
+BIT6 = 0x40
+BIT5 = 0x20
+BIT4 = 0x10
+BIT3 = 0x08
+BIT2 = 0x04
+BIT1 = 0x02
+BIT0 = 0x01
+
 def fill_screen_map():
 	global screen, Z80
 	mem = Z80.mem
 	for addr in range(buf_start, buf_end + 1):
 		y = ((addr & 0x00e0) >> 2) + ((addr & 0x0700) >> 8) + ((addr & 0x1800) >> 5)
-		sx = (addr & 0x1f) << 3
+		attr_x = (addr & 0x1f)
+		sx = attr_x << 3
 
-		attr = mem[22528 + (addr & 0x1f) + ((y >> 3) * 32)]
+		attr = mem[22528 + attr_x | ((y >> 3) << 5)]
 		bright = ((attr >> 3) & 0x08)
 		ink = (attr & 0x07) | bright
 		pap = ((attr >> 3) & 0x07) | bright
 
 		byte = mem[addr]
 
-		if (1 << 7) & byte:
+		if BIT7 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 6) & byte:
+		if BIT6 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 5) & byte:
+		if BIT5 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 4) & byte:
+		if BIT4 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 3) & byte:
+		if BIT3 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 2) & byte:
+		if BIT2 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if (1 << 1) & byte:
+		if BIT1 & byte:
 			color = ink
 		else:
 			color = pap
 		set_at((sx, y), brightColors[color])
 		sx += 1
-		if 1 & byte:
+		if BIT0 & byte:
 			color = ink
 		else:
 			color = pap

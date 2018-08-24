@@ -482,7 +482,7 @@ def op_ld_bc_xx():  # op 1 / LD BC,nn
 	BC(nxtpcw())
 	return 10
 
-def op_ld_bc_a():  # op 2 / LD (BC),A
+def op_ld__bc_a():  # op 2 / LD (BC),A
 	mem[BCget()] = _A
 	return 7
 
@@ -494,7 +494,7 @@ def op_add_hl_bc():  # op 9 / ADD HL,BC
 	HL(add16(_HL, BCget()))
 	return 11
 
-def op_ld_a_bc():  # op 10 (0x0A) / LD A,(BC)
+def op_ld_a__bc():  # op 10 (0x0A) / LD A,(BC)
 	A(peekb(BCget()))
 	return 7
 
@@ -513,6 +513,10 @@ def op_ld_de_xx():  # op 17 (0x11) / LD DE,nn
 	DE(nxtpcw())
 	return 10
 
+def op_ld__de_a():  # op 18 (0x12) / LD (DE),A
+	mem[DEget()] = _A
+	return 7
+
 def op_jr_x():  # op 24 (0x18) / JR dis
 	d = byte(nxtpcb())
 	PC((_PC + d) & 0xffff)
@@ -521,6 +525,10 @@ def op_jr_x():  # op 24 (0x18) / JR dis
 def op_add_hl_de():  # op 25 (0x19) / ADD HL,DE
 	HL(add16(_HL, DEget()))
 	return 11
+
+def op_ld_a__de():  # op 26 (0x1A) / LD A,(DE)
+	A(peekb(DEget()))
+	return 7
 
 def op_jr_nz_x():  # op 32 (0x20) / JR NZ,dis
 	# WARNING: Rom doesnt work properly ! VM 2005   Java byte must be -128...+127
@@ -540,6 +548,10 @@ def op_ld_hl_xx():  # op 33 (0x21) / LD HL,nn
 	HL(nxtpcw())
 	return 10
 
+def op_ld__xx_hl():  # op 34 (0x22) / LD (nn),HL
+	pokew(nxtpcw(), _HL);
+	return 16
+
 def op_jr_z_x():  # op 40 (0x28) / JR Z,dis
 	if (fZ):
 		d = byte(nxtpcb())
@@ -554,6 +566,10 @@ def op_add_hl_hl():  # op 41 (0x29) / ADD HL,HL
 	HL(add16(hl, hl))
 	return 11
 
+def op_ld_hl__xx():  # op 42 (0x2A) / LD HL,(nn)
+	HL(peekw(nxtpcw()))
+	return 16
+
 def op_jr_nc_x():  # op 48 (0x30) / JR NC,dis
 	if (not fC):
 		d = byte(nxtpcb())
@@ -566,6 +582,10 @@ def op_jr_nc_x():  # op 48 (0x30) / JR NC,dis
 def op_ld_sp_xx():  # op 49 (0x31) / LD SP,nn
 	SP(nxtpcw())
 	return 10
+
+def op_ld__xx_a():  # op 50 (0x23) / LD (nn),A
+	mem[nxtpcw()] = _A
+	return 13
 
 def op_jr_c_x():  # op 56 (0x38) / JR C,dis
 	if (fC):
@@ -580,25 +600,35 @@ def op_add_hl_sp():  # op 57 (0x39) / ADD HL,SP
 	HL(add16(_HL, SPget()))
 	return 11
 
+def op_ld_a__xx():  # op 58 (0x3A) / LD A,(nn)
+	A(peekb(nxtpcw()))
+	return 13
+
 opcodes = [0] * 256
 opcodes[0] = op_nop
 opcodes[1] = op_ld_bc_xx
-opcodes[2] = op_ld_bc_a
+opcodes[2] = op_ld__bc_a
 opcodes[8] = op_ex_af_af
 opcodes[9] = op_add_hl_bc
-opcodes[10] = op_ld_a_bc
+opcodes[10] = op_ld_a__bc
 opcodes[16] = op_djnz_x
 opcodes[17] = op_ld_de_xx
+opcodes[18] = op_ld__de_a
 opcodes[24] = op_jr_x
 opcodes[25] = op_add_hl_de
+opcodes[26] = op_ld_a__de
 opcodes[32] = op_jr_nz_x
 opcodes[33] = op_ld_hl_xx
+opcodes[34] = op_ld__xx_hl
 opcodes[40] = op_jr_z_x
 opcodes[41] = op_add_hl_hl
+opcodes[42] = op_ld_hl__xx
 opcodes[48] = op_jr_nc_x
 opcodes[49] = op_ld_sp_xx
+opcodes[50] = op_ld__xx_a
 opcodes[56] = op_jr_c_x
 opcodes[57] = op_add_hl_sp
+opcodes[58] = op_ld_a__xx
 
 
 # Z80 fetch/execute loop
@@ -625,18 +655,6 @@ def execute():
 				pass  # not (yet) converted to opcode function...
 				# TODO this should end up being an exception
 
-			if opcode == 18:    # LD (DE),A
-			 mem[ DEget()] = _A ; local_tstates += ( 7 ); continue
-			if opcode == 26:    # LD A,(DE) 
-			 A( peekb( DEget() ) ); local_tstates += ( 7 ); continue
-			if opcode == 34:    # LD (nn),HL 
-			 pokew( nxtpcw(), _HL ); local_tstates += ( 16 ); continue
-			if opcode == 42:    # LD HL,(nn) 
-			 HL( peekw( nxtpcw() ) ); local_tstates += ( 16 ); continue
-			if opcode == 50:    # LD (nn),A 
-			 mem[ nxtpcw()] = _A ; local_tstates += ( 13 ); continue
-			if opcode == 58:    # LD A,(nn) 
-			 A( peekb( nxtpcw() ) ); local_tstates += ( 13 ); continue
 
 			# INC/DEC * 
 			if opcode == 3:    # INC BC 
