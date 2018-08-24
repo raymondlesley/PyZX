@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a32e5504-55f1-4654-ae8a-0a5821adfad1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Z80.py" beforeDir="false" afterPath="$PROJECT_DIR$/Z80.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -243,12 +240,18 @@
       <option name="project" value="LOCAL" />
       <updated>1535026790419</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="test lambda performance">
+      <created>1535036519573</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1535036519573</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49898374" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -298,7 +301,8 @@
     <MESSAGE value="add timing tests" />
     <MESSAGE value="add opcode mapping tests" />
     <MESSAGE value="use list instead of dict for CPU operations&#10;(tests.py shows this is faster)" />
-    <option name="LAST_COMMIT_MESSAGE" value="use list instead of dict for CPU operations&#10;(tests.py shows this is faster)" />
+    <MESSAGE value="test lambda performance" />
+    <option name="LAST_COMMIT_MESSAGE" value="test lambda performance" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
