@@ -55,7 +55,6 @@ for i in range(256):
 
 
 # TODO: add word registers - speed up read ops (need to extend write ops)
-# TODO: store flags as the relevant bit (i.e. ff = 0x20, rather than True) - no shifting!
 # **Main registers
 _A = 0; _HL = 0; _B = 0; _C = 0; _DE = 0
 fS = 0; fZ  = 0; f5 = 0; fH = 0
@@ -3333,7 +3332,7 @@ def	rr_a():
 
 		A( ans );
 
-#TODO: check comparisons !
+# TODO: check comparisons !
 # Compare - alters all flags (CHECKED) 
 def	cp_a( b ):
 		a    = _A
