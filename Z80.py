@@ -58,8 +58,8 @@ for i in range(256):
 # TODO: store flags as the relevant bit (i.e. ff = 0x20, rather than True) - no shifting!
 # **Main registers
 _A = 0; _HL = 0; _B = 0; _C = 0; _DE = 0
-fS = False; fZ  = False; f5 = False; fH = False
-f3 = False; fPV = False; fN = False; fC = False
+fS = 0; fZ  = 0; f5 = 0; fH = 0
+f3 = 0; fPV = 0; fN = 0; fC = 0
 
 # ** Alternate registers
 _AF_ = 0; _HL_ = 0; _BC_ = 0; _DE_ = 0;
@@ -143,26 +143,18 @@ def A( bite ):
 
 
 def Fget():
-		return	iif(fS  , F_S  , 0)  |\
-			iif(fZ  , F_Z  , 0)  |\
-			iif(f5      , F_5  , 0)  |\
-			iif(fH  , F_H  , 0)  |\
-			iif(f3      , F_3  , 0)  |\
-			iif(fPV , F_PV , 0)  |\
-			iif(fN  , F_N  , 0)  |\
-			iif(fC  , F_C  , 0)
+	return fS | fZ | f5 | fH | f3 | fPV | fN | fC
 
-def F( bite ):
-		global fS, fZ, f5, fH, f3, fPV, fN, fC
-		fS  = (bite & F_S)#  != 0;
-		fZ  = (bite & F_Z)#  != 0;
-		f5  = (bite & F_5)#  != 0;
-		fH  = (bite & F_H)#  != 0;
-		f3  = (bite & F_3)#  != 0;
-		fPV = (bite & F_PV)# != 0;
-		fN  = (bite & F_N)#  != 0;
-		fC  = (bite & F_C)#  != 0;
-
+def F(byte):
+	global fS, fZ, f5, fH, f3, fPV, fN, fC
+	fS = byte & F_S
+	fZ = byte & F_Z
+	f5 = byte & F_5
+	fH = byte & F_H
+	f3 = byte & F_3
+	fPV = byte & F_PV
+	fN = byte & F_N
+	fC = byte & F_C
 
 
 # def  Bget(): return _B
@@ -254,28 +246,28 @@ def IM( im ):
 # Flag access 
 def setZ( f ):
 	global fZ
-	fZ = f
+	fZ = iif(f, F_Z, 0)
 def setC( f ):
 	global fC
-	fC = f
+	fC = iif(f, F_C, 0)
 def setS( f ):
 	global fS
-	fS = f
+	fS = iif(f, F_S, 0)
 def setH( f ):
 	global fH
-	fH = f
+	fH = iif(f, F_H, 0)
 def setN( f ):
 	global fN
-	fN = f
+	fN = iif(f, F_N, 0)
 def setPV( f ):
 	global fPV
-	fPV = f
+	fPV = iif(f, F_PV, 0)
 def set3( f ):
 	global f3
-	f3 = f
+	f3 = iif(f, F_3, 0)
 def set5( f ):
 	global f5
-	f5 = f
+	f5 = iif(f, F_5, 0)
 
 #def Zset(): return fZ
 #def Cset(): return fC
@@ -3344,69 +3336,64 @@ def	rr_a():
 #TODO: check comparisons !
 # Compare - alters all flags (CHECKED) 
 def	cp_a( b ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
-
 		a    = _A
 		wans = a - b
 		ans  = wans & 0xff
 
-		fS=(ans & F_S)
-		f3=(b & F_3)
-		f5=(b & F_5)
-		fN=(True )
-		fZ=(ans == 0 )
-		fC=(wans & 0x100)
-		fH=(((a & 0x0f) - (b & 0x0f)) & F_H)
-		fPV=((a ^ b) & (a ^ ans) & 0x80)
+		setS(ans & F_S)
+		set3(b & F_3)
+		set5(b & F_5)
+		setN(True )
+		setZ(ans == 0)
+		setC(wans & 0x100)
+		setH(((a & 0x0f) - (b & 0x0f)) & F_H)
+		setPV((a ^ b) & (a ^ ans) & 0x80)
 
 
 # Bitwise and - alters all flags (CHECKED) 
 def	and_a( b ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		ans = _A & b;
 
-		fS=( (ans & F_S) != 0 );
-		f3=( (ans & F_3) != 0 );
-		f5=( (ans & F_5) != 0 );
-		fH=( True );
-		fPV=( parity[ ans ] );
-		fZ=( ans == 0 );
-		fN=( False );
-		fC=( False );
+		setS( (ans & F_S) != 0 );
+		set3( (ans & F_3) != 0 );
+		set5( (ans & F_5) != 0 );
+		setH( True );
+		setPV( parity[ ans ] );
+		setZ( ans == 0 );
+		setN( False );
+		setC( False );
 
 		A( ans );
 
 
 # Bitwise or - alters all flags (CHECKED) 
 def	or_a( b ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		ans = _A | b;
 
-		fS=( (ans & F_S) != 0 );
-		f3=( (ans & F_3) != 0 );
-		f5=( (ans & F_5) != 0 );
-		fH=( False );
-		fPV=( parity[ ans ] );
-		fZ=( ans == 0 );
-		fN=( False );
-		fC=( False );
+		setS( (ans & F_S) != 0 );
+		set3( (ans & F_3) != 0 );
+		set5( (ans & F_5) != 0 );
+		setH( False );
+		setPV( parity[ ans ] );
+		setZ( ans == 0 );
+		setN( False );
+		setC( False );
 
 		A( ans );
 
 
 # Bitwise exclusive or - alters all flags (CHECKED) 
 def	xor_a( b ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		ans = (_A ^ b) & 0xff;
 
-		fS=( (ans & F_S) != 0 );
-		f3=( (ans & F_3) != 0 );
-		f5=( (ans & F_5) != 0 );
-		fH=( False );
-		fPV=( parity[ ans ] );
-		fZ=( ans == 0 );
-		fN=( False );
-		fC=( False );    
+		setS( (ans & F_S) != 0 );
+		set3( (ans & F_3) != 0 );
+		set5( (ans & F_5) != 0 );
+		setH( False );
+		setPV( parity[ ans ] );
+		setZ( ans == 0 );
+		setN( False );
+		setC( False );
 
 		A( ans );
 
@@ -3724,55 +3711,52 @@ def srl( ans ):
 
 # Decrement - alters all but C flag (CHECKED) 
 def dec8( ans ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		pv = (ans == 0x80)
 		h  = ((ans & 0x0f) - 1) & F_H
 		ans = (ans - 1) & 0xff
 
-		fS= (ans & F_S)
-		f3= (ans & F_3)
-		f5= (ans & F_5)
-		fZ= ((ans) == 0 )
-		fPV= pv
-		fH= h 
-		fN= True
+		setS(ans & F_S)
+		set3(ans & F_3)
+		set5(ans & F_5)
+		setZ((ans) == 0 )
+		setPV(pv)
+		setH(h )
+		setN(True)
 
-		return(ans);
+		return ans
 
 
 # Increment - alters all but C flag (CHECKED) 
 def inc8( ans ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		pv = (ans == 0x7f)
 		h  = ((ans & 0x0f) + 1) & F_H
 		ans = (ans + 1) & 0xff;
 
-		fS=(ans & F_S)
-		f3=(ans & F_3)
-		f5=(ans & F_5)
-		fZ=( (ans) == 0 )
-		fPV= pv
-		fH= h
-		fN= False
+		setS(ans & F_S)
+		set3(ans & F_3)
+		set5(ans & F_5)
+		setZ( (ans) == 0 )
+		setPV(pv)
+		setH(h)
+		setN(False)
 
 		return(ans);
 
 
 # Add with carry - (NOT CHECKED) 
 def adc16( a, b ):
-		global fS, f3, f5, fN, fZ, fC, fH, fPV
 		c    = iif(fC , 1 , 0)
 		lans = a + b + c;
 		ans  = lans & 0xffff;
 
-		fS=(ans & (F_S<<8))
-		f3=(ans & (F_3<<8))
-		f5=(ans & (F_5<<8))
-		fZ=( (ans) == 0 )
-		fC= (lans & 0x10000)
-		fPV= ((a ^ ~b) & (a ^ ans) & 0x8000)
-		fH= (((a & 0x0fff) + (b & 0x0fff) + c) & 0x1000)
-		fN= False
+		setS(ans & (F_S<<8))
+		set3(ans & (F_3<<8))
+		set5(ans & (F_5<<8))
+		setZ( (ans) == 0 )
+		setC(lans & 0x10000)
+		setPV((a ^ ~b) & (a ^ ans) & 0x8000)
+		setH(((a & 0x0fff) + (b & 0x0fff) + c) & 0x1000)
+		setN( False)
 
 		return(ans);
 
