@@ -5,7 +5,7 @@
 import time
 import random
 
-ITERATIONS = 1000000
+ITERATIONS = 100000
 
 def Assert(truth):
     if not truth:
@@ -534,7 +534,7 @@ stop = time.process_time()
 print("indexed: %fs" % (stop - start))
 
 # ============================================================================
-# iff - function or lambda?
+# iif - function or lambda?
 
 def iif_fn(x, a, b):
 	if x:
@@ -559,3 +559,169 @@ for repeat in range(ITERATIONS):
     Assert(iif_fn(False, 1, 2) == 2)
 stop = time.process_time()
 print("lambda: %fs" % (stop - start))
+
+# ============================================================================
+# flags - bools or bits?
+
+print("bitwise flags:")
+
+F_C  = 0x01
+F_N  = 0x02
+F_PV = 0x04
+F_3  = 0x08
+F_H  = 0x10
+F_5  = 0x20
+F_Z  = 0x40
+F_S  = 0x80
+
+fS = False; fZ  = False; f5 = False; fH = False
+f3 = False; fPV = False; fN = False; fC = False
+
+# as booleans
+
+iif = iif_lambda
+
+def getF_bool():
+    return	iif(fS  , F_S  , 0)  |\
+        iif(fZ  , F_Z  , 0)  |\
+        iif(f5      , F_5  , 0)  |\
+        iif(fH  , F_H  , 0)  |\
+        iif(f3      , F_3  , 0)  |\
+        iif(fPV , F_PV , 0)  |\
+        iif(fN  , F_N  , 0)  |\
+        iif(fC  , F_C  , 0)
+
+def F_bool( bite ):
+    global fS, fZ, f5, fH, f3, fPV, fN, fC
+    '''
+    fS  = (bite & F_S)#  != 0;
+    fZ  = (bite & F_Z)#  != 0;
+    f5  = (bite & F_5)#  != 0;
+    fH  = (bite & F_H)#  != 0;
+    f3  = (bite & F_3)#  != 0;
+    fPV = (bite & F_PV)# != 0;
+    fN  = (bite & F_N)#  != 0;
+    fC  = (bite & F_C)#  != 0;
+    '''
+    fS  = (bite & F_S)  != 0
+    fZ  = (bite & F_Z)  != 0
+    f5  = (bite & F_5)  != 0
+    fH  = (bite & F_H)  != 0
+    f3  = (bite & F_3)  != 0
+    fPV = (bite & F_PV) != 0
+    fN  = (bite & F_N)  != 0
+    fC  = (bite & F_C)  != 0
+
+def fZ_bool( f ):
+	global fZ
+	fZ = f
+def fC_bool( f ):
+	global fC
+	fC = f
+def fS_bool( f ):
+	global fS
+	fS = f
+def fH_bool( f ):
+	global fH
+	fH = f
+def fN_bool( f ):
+	global fN
+	fN = f
+def fPV_bool( f ):
+	global fPV
+	fPV = f
+def f3_bool( f ):
+	global f3
+	f3 = f
+def f5_bool( f ):
+	global f5
+	f5 = f
+
+start = time.process_time()
+for repeat in range(ITERATIONS):
+    F_bool(0xA5)
+    Assert(getF_bool() == 0xA5)
+    Assert(fS)
+    Assert(not fZ)
+    Assert(f5)
+    Assert(not fH)
+    Assert(not f3)
+    Assert(fPV)
+    Assert(not fN)
+    Assert(fC)
+    fS_bool(False)
+    fZ_bool(True)
+    f5_bool(False)
+    fH_bool(True)
+    f3_bool(True)
+    fPV_bool(False)
+    fN_bool(True)
+    fC_bool(False)
+    Assert(getF_bool() == 0x5A)
+stop = time.process_time()
+print("booleans: %fs" % (stop - start))
+
+# bitwise
+
+def getF_bits():
+	return	fS | fZ | f5 | fH | f3 | fPV | fN | fC
+
+def F_bits(byte):
+    global fS, fZ, f5, fH, f3, fPV, fN, fC
+    fS  = byte & F_S
+    fZ  = byte & F_Z
+    f5  = byte & F_5
+    fH  = byte & F_H
+    f3  = byte & F_3
+    fPV = byte & F_PV
+    fN  = byte & F_N
+    fC  = byte & F_C
+
+def fZ_bits( f ):
+	global fZ
+	fZ = iif(f, F_Z, 0)
+def fC_bits( f ):
+	global fC
+	fC = iif(f, F_C, 0)
+def fS_bits( f ):
+	global fS
+	fS = iif(f, F_S, 0)
+def fH_bits( f ):
+	global fH
+	fH = iif(f, F_H, 0)
+def fN_bits( f ):
+	global fN
+	fN = iif(f, F_N, 0)
+def fPV_bits( f ):
+	global fPV
+	fPV = iif(f, F_PV, 0)
+def f3_bits( f ):
+	global f3
+	f3 = iif(f, F_3, 0)
+def f5_bits( f ):
+	global f5
+	f5 = iif(f, F_5, 0)
+
+start = time.process_time()
+for repeat in range(ITERATIONS):
+    F_bits(0xA5)
+    Assert(getF_bits() == 0xA5)
+    Assert(fS)
+    Assert(not fZ)
+    Assert(f5)
+    Assert(not fH)
+    Assert(not f3)
+    Assert(fPV)
+    Assert(not fN)
+    Assert(fC)
+    fS_bits(False)
+    fZ_bits(True)
+    f5_bits(False)
+    fH_bits(True)
+    f3_bits(True)
+    fPV_bits(False)
+    fN_bits(True)
+    fC_bits(False)
+    Assert(getF_bits() == 0x5A)
+stop = time.process_time()
+print("bitwise: %fs" % (stop - start))
