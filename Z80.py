@@ -322,7 +322,7 @@ def popw():
 		SP( sp & 0xffff );
 		return t;
 
-    
+
 
 # Call stack 
 def pushpc(): pushw( _PC  )
@@ -1620,18 +1620,18 @@ def execute_ed( local_tstates ):
 			_R += -2 
 #WARNING!!! inadequate substitution of java's do loop-----
 			original="""
-      do {
-        pokeb(dest, peekb(from) );
-        from  = inc16( from );
-        dest  = inc16( dest );
-        count = dec16( count );
+	  do {
+		pokeb(dest, peekb(from) );
+		from  = inc16( from );
+		dest  = inc16( dest );
+		count = dec16( count );
 
-        _local_tstates += ( 21 );
-        _R += 2 
-        if ( interruptTriggered( _local_tstates ) ) {
-          break;
-        }
-      } while (count != 0);"""
+		_local_tstates += ( 21 );
+		_R += 2 
+		if ( interruptTriggered( _local_tstates ) ) {
+		  break;
+		}
+	  } while (count != 0);"""
 
 
 			#NOTE: WORKS WRONG! must be not (count +1) 
@@ -1741,18 +1741,18 @@ def execute_ed( local_tstates ):
 			_R += -2
 #WARNING inadequate do/while substit.----------------------
 			orig = """
-      do {
-        pokeb(dest, peekb(from));
-        from  = dec16( from );
-        dest  = dec16( dest );
-        count = dec16( count );
+	  do {
+		pokeb(dest, peekb(from));
+		from  = dec16( from );
+		dest  = dec16( dest );
+		count = dec16( count );
 
-        _local_tstates += ( 21 );
-        _R += 2 
-        if ( interruptTriggered( _local_tstates ) ) {
-          break;
-        }
-      } while (count != 0);"""
+		_local_tstates += ( 21 );
+		_R += 2 
+		if ( interruptTriggered( _local_tstates ) ) {
+		  break;
+		}
+	  } while (count != 0);"""
 			version1 = """
 			mem[dest] = peekb(src)
 			src  = ( src  - 1) & 0xffff
@@ -2525,18 +2525,18 @@ def execute_id():
 		if opcode == 44:# INC IDL 
 		 IDL( inc8( IDLget() ) ); return ( 8 )
 		if opcode == 52:# INC (ID+d) 
-		    z = ID_d();
-		    mem[z] = inc8( peekb(z) )
-		    return ( 23 );
+			z = ID_d();
+			mem[z] = inc8( peekb(z) )
+			return ( 23 );
 	
 		if opcode == 37:# DEC IDH 
 		 IDH( dec8( IDHget() ) ); return ( 8 )
 		if opcode == 45:# DEC IDL 
 		 IDL( dec8( IDLget() ) ); return ( 8 )
 		if opcode == 53:# DEC (ID+d) 
-		    z = ID_d();
-		    mem[z] = dec8( peekb(z) )
-		    return ( 23 );
+			z = ID_d();
+			mem[z] = dec8( peekb(z) )
+			return ( 23 );
 	
 
 		if opcode == 38: # LD IDH,n 
@@ -3644,7 +3644,7 @@ def	rr( ans ):
 def	sla( ans ):
 		c = bool((ans & 0x80) != 0)
 		ans = (ans << 1) & 0xff;
-    
+
 		setS( (ans & F_S) != 0 );
 		set3( (ans & F_3) != 0 );
 		set5( (ans & F_5) != 0 );
