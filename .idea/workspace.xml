@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a32e5504-55f1-4654-ae8a-0a5821adfad1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/PyZX.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyZX.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-    </list>
+    <list default="true" id="a32e5504-55f1-4654-ae8a-0a5821adfad1" name="Default" comment="store flags as bit values" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,18 +12,21 @@
     <session id="-1235573996">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+          <entry key="project.closed" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="1" />
+          <entry key="py" value="242" />
+          <entry key="txt" value="46" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="1" />
+          <entry key="PLAIN_TEXT" value="46" />
+          <entry key="Python" value="242" />
         </counts>
       </usages-collector>
     </session>
@@ -43,11 +42,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Z80.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="3776" lean-forward="true" selection-start-line="3776" selection-end-line="3776" />
+            <state>
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -55,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="677" column="20" lean-forward="true" selection-start-line="677" selection-start-column="20" selection-end-line="677" selection-end-column="20" />
+            <state relative-caret-position="753">
+              <caret line="727" lean-forward="true" selection-start-line="727" selection-end-line="727" />
               <folding>
                 <element signature="e#205#216#0" expanded="true" />
               </folding>
@@ -106,9 +104,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>fZ</find>
       <find>setZ</find>
       <find>iff</find>
+      <find>fZ</find>
     </findStrings>
     <replaceStrings>
       <replace>bits</replace>
@@ -125,9 +123,9 @@
         <option value="$PROJECT_DIR$/spectrum.py" />
         <option value="$PROJECT_DIR$/keyboard.py" />
         <option value="$PROJECT_DIR$/video.py" />
-        <option value="$PROJECT_DIR$/Z80.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/Z80.py" />
       </list>
     </option>
   </component>
@@ -172,7 +170,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.spectrum">
     <configuration name="spectrum" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="PyZX" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -221,8 +219,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.spectrum" />
+        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -286,19 +284,32 @@
       <option name="project" value="LOCAL" />
       <updated>1535036519573</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="add bit flags tests">
+      <created>1535101220573</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1535101220573</updated>
+    </task>
+    <task id="LOCAL-00009" summary="store flags as bit values">
+      <created>1535102330202</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1535102330202</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49691358" visible="true" weight="0.24973656" />
-      <window_info id="Structure" order="1" sideWeight="0.50308645" side_tool="true" visible="true" weight="0.24973656" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4974093" visible="true" weight="0.24973656" />
+      <window_info id="Structure" order="1" sideWeight="0.50259066" side_tool="true" visible="true" weight="0.24973656" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3292683" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.3284974" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947917" weight="0.3284974" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39939025" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -342,7 +353,9 @@
     <MESSAGE value="add opcode mapping tests" />
     <MESSAGE value="use list instead of dict for CPU operations&#10;(tests.py shows this is faster)" />
     <MESSAGE value="test lambda performance" />
-    <option name="LAST_COMMIT_MESSAGE" value="test lambda performance" />
+    <MESSAGE value="add bit flags tests" />
+    <MESSAGE value="store flags as bit values" />
+    <option name="LAST_COMMIT_MESSAGE" value="store flags as bit values" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -415,22 +428,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Z80.py">
+    <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="3776" lean-forward="true" selection-start-line="3776" selection-end-line="3776" />
+        <state relative-caret-position="753">
+          <caret line="727" lean-forward="true" selection-start-line="727" selection-end-line="727" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#205#216#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
+    <entry file="file://$PROJECT_DIR$/Z80.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="677" column="20" lean-forward="true" selection-start-line="677" selection-start-column="20" selection-end-line="677" selection-end-column="20" />
+        <state>
           <folding>
-            <element signature="e#205#216#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
