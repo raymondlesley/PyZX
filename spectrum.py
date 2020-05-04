@@ -49,7 +49,7 @@ load_rom(romfile)
 Z80.reset()
 Z80.outb( 254, 0xff, 0 ) #white border on startup
 
-sys.setcheckinterval(255) #we don't use threads, kind of speed up
+sys.setswitchinterval(0.5) #we don't use threads, kind of speed up
 
 #load.loadZ80('./games/KLORE-TR.Z80')
 #PAWS.Z80
