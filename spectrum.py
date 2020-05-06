@@ -7,30 +7,40 @@
 #
 # from https://www.pygame.org/project/173/1347
 # converted for Python 3.6, Tkinter August 2018 Raymond Lesley
+# updated for Python 3.8 May 2020 Raymond lesley
 
 import sys
-import Z80, video
+import Z80
+import video
 
-romfile = '48.rom'  # '48-modified.rom'  # '48-busysoft-140.rom' #'spectrum.rom'
-# 'trdos-501.rom'
+#
+# Configuration constants - define machine
+#
 
-def test_programm():
-	'''    txt = """
-	3E 03       LD A,3
-	67          LD H,A
-	18 02       JR (PC+e)
-	C6 03       ADD A,3
-	C6 03       ADD A,3
-	"""
-	'''
+CPUFREQ = 3.5  # MHz
+ROMFILE = '48.rom'
+# ROMFILE = '48-modified.rom'
+# ROMFILE = '48-busysoft-140.rom'
+# ROMFILE = 'spectrum.rom'
+# ROMFILE = 'trdos-501.rom'
+
+
+def test_program():
+	# txt = """
+	# 3E 03       LD A,3
+	# 67          LD H,A
+	# 18 02       JR (PC+e)
+	# C6 03       ADD A,3
+	# C6 03       ADD A,3
+	# """
 	# code = [0x3E, 0x03, 0x67, 0x18, 0x01, 0xC6, 0xC6, 0xC6]
 	# code = [0x3E, 0x03, 0xC6, 0x03, 0xC6, 0x03, 0xC6, 0x03]
 	code = [0x3E, 0x03, 0x67, 0x18, 0x02, 0xC6, 0x03, 0xC6, 0x03]
 	return code
 
 
-def load_rom(romfile):
-	rom = open(romfile, 'rb').read()
+def load_rom(filename):
+	rom = open(filename, 'rb').read()
 	# rom = test_programm()
 	for index, item in enumerate(rom):
 		# op = ord(item)
@@ -47,16 +57,16 @@ def run():
 
 
 video.init()
-Z80.Z80(3.5)  # CPU freq in MhZ
+Z80.Z80(CPUFREQ)  # CPU freq in MhZ
 
-load_rom(romfile)
+load_rom(ROMFILE)
 Z80.reset()
 Z80.outb(254, 0xff, 0)  # white border on startup
 
 sys.setswitchinterval(0.5)  # we don't use threads, so reduce task switching frequency
 
-import load
-load.loadZ80('./games/INVADERS.Z80')
+# import load
+# load.loadZ80('./games/INVADERS.Z80')
 # load.loadZ80('./games/KLORE-TR.Z80')
 # PAWS.Z80
 # DIZZY1YS.Z80
@@ -73,6 +83,4 @@ load.loadZ80('./games/INVADERS.Z80')
 # SABOT2PL.Z80
 # SENTNEL.Z80
 
-# import profile
-# profile.run('run()')
 run()
