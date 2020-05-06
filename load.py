@@ -6,11 +6,11 @@ def loadZ80(name):
 
 		f = open( name, 'rb')
 		header_str = f.read(30)
-		header = [ord(b) for b in header_str]
+		header = [b for b in header_str]
 
 		Z80.A( header[0] );
 		Z80.F( header[1] );
-     
+
 		Z80.C( header[2] );
 		Z80.B( header[3] );
 		Z80.L( header[4] );
@@ -78,7 +78,7 @@ def loadZ80(name):
 			print('reading compressed')
 			f = open( name, 'rb')
 			f.seek(30)
-			bytes = [ord(b) for b in  f.read()]
+			bytes = [b for b in  f.read()]
 			size = len(bytes)
 			print('size = len(bytes):', size)
 			i = 0
@@ -330,4 +330,3 @@ a="""
 
 
 #loadZ80('JSWAPRIL.Z80', Z80.mem)
-
