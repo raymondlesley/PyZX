@@ -19,8 +19,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b0ecac8-58d9-46e4-b40a-d58b34b3efab" name="Default Changelist" comment="use original ROM&#10;a little code tidy...">
+    <list default="true" id="7b0ecac8-58d9-46e4-b40a-d58b34b3efab" name="Default Changelist" comment="further code tidy - address style issues">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Z80.py" beforeDir="false" afterPath="$PROJECT_DIR$/Z80.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/load.py" beforeDir="false" afterPath="$PROJECT_DIR$/load.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/spectrum.py" beforeDir="false" afterPath="$PROJECT_DIR$/spectrum.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,7 +45,8 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunManager">
     <configuration name="spectrum" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -88,7 +94,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588776840103</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="further code tidy - address style issues">
+      <created>1588779860062</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1588779860062</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -101,35 +114,41 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="use original ROM&#10;a little code tidy..." />
-    <option name="LAST_COMMIT_MESSAGE" value="use original ROM&#10;a little code tidy..." />
+    <MESSAGE value="further code tidy - address style issues" />
+    <option name="LAST_COMMIT_MESSAGE" value="further code tidy - address style issues" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1308" height="176" key="GridCell.Tab.0.bottom" timestamp="1588779782287">
+    <state width="1344" height="192" key="GridCell.Tab.0.bottom" timestamp="1589110662939">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1308" height="176" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1588779782287" />
-    <state width="1308" height="176" key="GridCell.Tab.0.center" timestamp="1588779782286">
+    <state width="1344" height="192" key="GridCell.Tab.0.bottom/0.0.1366.768@0.0.1366.768" timestamp="1589110662939" />
+    <state width="1344" height="192" key="GridCell.Tab.0.center" timestamp="1589110662938">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1308" height="176" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1588779782286" />
-    <state width="1308" height="176" key="GridCell.Tab.0.left" timestamp="1588779782286">
+    <state width="1344" height="192" key="GridCell.Tab.0.center/0.0.1366.768@0.0.1366.768" timestamp="1589110662938" />
+    <state width="1344" height="192" key="GridCell.Tab.0.left" timestamp="1589110662938">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1308" height="176" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1588779782286" />
-    <state width="1308" height="176" key="GridCell.Tab.0.right" timestamp="1588779782287">
+    <state width="1344" height="192" key="GridCell.Tab.0.left/0.0.1366.768@0.0.1366.768" timestamp="1589110662938" />
+    <state width="1344" height="192" key="GridCell.Tab.0.right" timestamp="1589110662938">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state width="1308" height="176" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1588779782287" />
+    <state width="1344" height="192" key="GridCell.Tab.0.right/0.0.1366.768@0.0.1366.768" timestamp="1589110662938" />
+    <state x="184" y="28" key="SettingsEditor" timestamp="1589110537984">
+      <screen x="0" y="0" width="1366" height="768" />
+    </state>
+    <state x="184" y="28" key="SettingsEditor/0.0.1366.768@0.0.1366.768" timestamp="1589110537984" />
     <state x="275" y="116" key="Vcs.Push.Dialog.v2" timestamp="1588776912774">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
     <state x="275" y="116" key="Vcs.Push.Dialog.v2/0.0.1366.768@0.0.1366.768" timestamp="1588776912774" />
-    <state x="492" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1588776259298">
+    <state x="492" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1589110966970">
       <screen x="0" y="0" width="1366" height="768" />
     </state>
-    <state x="492" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.768@0.0.1366.768" timestamp="1588776259298" />
+    <state x="492" y="297" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1366.768@0.0.1366.768" timestamp="1589110966970" />
   </component>
 </project>
