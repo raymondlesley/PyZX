@@ -143,7 +143,7 @@ def loadZ80(name):
 			print('reading uncompressed',)
 			f = open( name, 'rb')
 			f.seek(30)
-			bytes =[ord(b) for b in f.read(49152)]
+			bytes =[b for b in f.read(49152)]
 			print('len(Z80.mem):', len(Z80.mem))
 			Z80.mem[16384:len(bytes)+1] = bytes[:]
 			print('len(bytes):%s len(Z80.mem):%s' % (len(bytes), len(Z80.mem)))
@@ -151,7 +151,7 @@ def loadZ80(name):
 
 def	loadZ80_extended(f, pos):
 		f.seek(pos)
-		header = [ord(b) for b in f.read(2)]
+		header = [b for b in f.read(2)]
 		pos += 2
 
 		type = header[0] | (header[1] << 8)
@@ -170,7 +170,7 @@ def	loadZ80_extended(f, pos):
 
 def loadZ80_v201(f, pos):
 		f.seek(pos)
-		header = [ord(b) for b in f.read(23)]
+		header = [b for b in f.read(23)]
 		pos += 23
 		Z80.PC( header[0] | (header[1]<<8) )
 		# 0 - 48K
@@ -183,7 +183,7 @@ def loadZ80_v201(f, pos):
 			print("Z80 (v201): unsupported type ", type)
 			sys.exit()
 		f.seek(pos)
-		data = [ord(b) for b in f.read()]
+		data = [b for b in f.read()]
 		offset = 0
 		j = 0
 		while j < 3:
@@ -193,7 +193,7 @@ def loadZ80_v201(f, pos):
 
 def loadZ80_v300(f, pos):
 		f.seek(pos)
-		header = [ord(b) for b in f.read(54)]
+		header = [b for b in f.read(54)]
 		pos += 54
 		Z80.PC( header[0] | (header[1]<<8) )
 		# 0 - 48K
@@ -208,7 +208,7 @@ def loadZ80_v300(f, pos):
 			print("Z80 (v300): unsupported type ", type)
 			sys.exit()
 		f.seek(pos)
-		data = [ord(b) for b in f.read()]
+		data = [b for b in f.read()]
 		offset = 0
 		j = 0
 		while j < 3:
@@ -218,7 +218,7 @@ def loadZ80_v300(f, pos):
 
 def loadZ80_v301(f, pos):
 		f.seek(pos)
-		header = [ord(b) for b in f.read(54)]
+		header = [b for b in f.read(54)]
 		pos += 54
 		Z80.PC( header[0] | (header[1]<<8) )
 		# 0 - 48K
@@ -234,7 +234,7 @@ def loadZ80_v301(f, pos):
 			print("Z80 (v301): unsupported type ", type)
 			sys.exit()
 		f.seek(pos)
-		data = [ord(b) for b in f.read()]
+		data = [b for b in f.read()]
 		offset = 0
 		j = 0
 		while j < 3:
